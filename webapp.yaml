@@ -94,4 +94,4 @@
               dest: /var/www/html/
 
         - name: Update index.php
-          command: sudo sed -i 's/172.20.1.101/{{hostname}}/g' /var/www/html/index.php
+          command: sudo sed -i 's/172.20.1.101/{{ansible_host}}/g' /var/www/html/index.php

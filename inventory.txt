@@ -1,0 +1,2 @@
+appserver ansible_host=192.168.1.28 ansible_connection=ssh ansible_user=osboxes ansible_ssh_pass=osboxes.org
+dbserver ansible_host=192.168.1.29 ansible_connection=ssh ansible_user=osboxes ansible_ssh_pass=osboxes.org
