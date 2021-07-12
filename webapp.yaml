@@ -23,9 +23,9 @@
           service: name=mariadb state=enabled       
         - name: Configure firewall for Database
           command: "{{item}}"
-          with_item:
-              sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
-              sudo firewall-cmd --reload
+          loop:
+              - sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
+              - sudo firewall-cmd --reload
         - name: Create a new database with name 'ecomdb'
           mysql_db:
               name: ecomdb
@@ -78,10 +78,10 @@
 
         - name: Configure firewall for webserver
           command: "{{item}}"
-          with_item:
-              sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
-              sudo firewall-cmd --reload
-              sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
+          loop:
+              - sudo firewall-cmd --permanent --zone=public --add-port=80/tcp
+              - sudo firewall-cmd --reload
+              - sudo sed -i 's/index.html/index.php/g' /etc/httpd/conf/httpd.conf
 
         - name: start firewalld
           service: name=firewalld state=started
