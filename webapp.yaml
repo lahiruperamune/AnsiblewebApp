@@ -1,0 +1,82 @@
+-
+    name: Deploy and Configure Database
+    hosts: dbserver
+    tasks: 
+      - name: install mariadb in Debian
+        apt:
+           name: mariadb-server
+           state: latest
+        when: ansible_os_family == "Debian"
+      - name: install mariadb in RedHat
+        yum:
+           name: mariadb-server
+           state: latest
+        when: ansible_os_family == "RedHat"
+ #     - name: start and enable Database
+ #       command: "{{item}}"
+ #       with_item:
+ #         sudo service mariadb start
+ #         sudo systemctl enable mariadb
+      - name: start Database
+        service: name=mariadb state=started
+      - name: enable Database
+        service: name=mariadb state=enabled       
+      - name: Configure firewall for Database
+        command: "{{item}}"
+        with_item:
+          sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
+          sudo firewall-cmd --reload
+      - name: Create a new database with name 'ecomdb'
+        mysql_db:
+          name: ecomdb
+          state: present
+      - name: Create database user with name 'ecomuser' and password 'ecompassword' with all database privileges
+        mysql_user:
+          name: ecomuser
+          password: ecompassword
+          priv: '*.*:ALL'
+          state: present
+#      - name: Creating the db-load-script.sql
+#        copy:
+#          dest: "db-load-script.sql"
+#          content: |
+#              USE ecomdb;
+#              CREATE TABLE products (id mediumint(8) unsigned NOT NULL auto_increment,Name varchar(255) default NULL,Price varchar(255) default NULL, ImageUrl varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1;
+#              INSERT INTO products (Name,Price,ImageUrl) VALUES ("Laptop","100","c-1.png"),("Drone","200","c-2.png"),("VR","300","c-3.png"),("Tablet","50","c-5.png"),("Watch","90","c-6.png"),("Phone Covers","20","c-7.png"),("Phone","80","c-8.png"),("Laptop","150","c-4.png");
+      - name: Run sql queries
+        mysql_query:
+          login_db: ecomdb
+          query: 
+            - CREATE TABLE products (id mediumint(8) unsigned NOT NULL auto_increment,Name varchar(255) default NULL,Price varchar(255) default NULL, ImageUrl varchar(255) default NULL,PRIMARY KEY (id)) AUTO_INCREMENT=1
+            - INSERT INTO products (Name,Price,ImageUrl) VALUES ("Laptop","100","c-1.png"),("Drone","200","c-2.png"),("VR","300","c-3.png"),("Tablet","50","c-5.png"),("Watch","90","c-6.png"),("Phone Covers","20","c-7.png"),("Phone","80","c-8.png"),("Laptop","150","c-4.png")
+#            single_transaction: yes
+
+
+
+
+-
+    name: Deploy and Configure Web
+    hosts: appserver
+    vars:
+      packages:
+        - name: httpd
+          required: True
+        - name: php
+          required: True
+        - name: php-mysql 
+          required: True          
+    tasks: 
+      - name: Install {{item.name}} on debian
+        apt:
+           name: "{{item.name}}"
+           state: latest
+        when: ansible_os_family == "Debian"
+      - name: Install {{item.name}} on redhat
+        yum:
+           name: "{{item.name}}"
+           state: latest
+        when: ansible_os_family == "RedHat"
+      - name: start firewalld
+        service: name=firewalld state=started
+      - name: enable firewalld
+        service: name=firewalld state=enabled
