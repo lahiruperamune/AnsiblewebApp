@@ -12,6 +12,8 @@
           yum:
               name: mariadb-server
               state: latest
+          become_user: root
+          become: yes
           when: ansible_os_family == "RedHat"
 #      - name: start and enable Database
 #        command: "{{item}}"
