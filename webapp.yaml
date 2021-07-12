@@ -6,11 +6,13 @@
           apt:
               name: mariadb-server
               state: latest
+          become: yes
           when: ansible_os_family == "Debian"
         - name: install mariadb in RedHat
           yum:
               name: mariadb-server
               state: latest
+          become: yes
           when: ansible_os_family == "RedHat"
 #      - name: start and enable Database
 #        command: "{{item}}"
@@ -70,11 +72,13 @@
           apt:
               name: "{{item.name}}"
               state: latest
+          become: yes
           when: ansible_os_family == "Debian"
         - name: Install {{item.name}} on redhat
           yum:
               name: "{{item.name}}"
               state: latest
+          become: yes
           when: ansible_os_family == "RedHat"
 
         - name: Configure firewall for webserver
