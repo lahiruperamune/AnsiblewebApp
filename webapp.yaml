@@ -9,8 +9,6 @@
           become: yes
           when: ansible_os_family == "Debian"
         - name: install mariadb in RedHat
-          become_user: root
-          become_password: osboxes.org
           yum:
               name: mariadb-server
               state: latest
@@ -76,8 +74,6 @@
           become: yes
           when: ansible_os_family == "Debian"
         - name: Install {{item.name}} on redhat
-          become_user: root
-          become_password: osboxes.org
           yum:
               name: "{{item.name}}"
               state: latest
