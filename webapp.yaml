@@ -6,6 +6,7 @@
           apt:
               name: mariadb-server
               state: latest
+          become_user: root
           become: yes
           when: ansible_os_family == "Debian"
         - name: install mariadb in RedHat
@@ -25,7 +26,7 @@
         - name: enable Database
           service: name=mariadb state=enabled       
         - name: Configure firewall for Database
-          command: "{{item}}"
+          command: "{{ item }}"
           loop:
               - sudo firewall-cmd --permanent --zone=public --add-port=3306/tcp
               - sudo firewall-cmd --reload
