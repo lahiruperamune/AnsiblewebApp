@@ -1,4 +1,5 @@
 # Variable file for host db_and_web_server
+ansible_user: debianadmin
 ansible_ssh_pass: debianadmin@123123
 ansible_host: 20.93.141.106
 db_name: employee_db
